@@ -75,7 +75,46 @@ subscription-manager repos \
     --enable="rhel-7-server-ansible-2.6-rpms"
 ```
 
-4. Make sure the systems have the latest patches
+4. Make sure that all of your masters and nodes have Docker running
+
+```
+ansible nodes -mshell -a'systemctl status docker| grep Active'
+
+node2.$GUID.internal | SUCCESS | rc=0 >>
+   Active: active (running) since Fri 2018-03-09 18:18:41 UTC; 3 days ago
+
+master1.$GUID.internal | SUCCESS | rc=0 >>
+   Active: active (running) since Fri 2018-03-09 18:18:39 UTC; 3 days ago
+
+infranode1.$GUID.internal | SUCCESS | rc=0 >>
+   Active: active (running) since Fri 2018-03-09 18:18:40 UTC; 3 days ago
+
+node1.$GUID.internal | SUCCESS | rc=0 >>
+   Active: active (running) since Fri 2018-03-09 18:18:40 UTC; 3 days ago
+```
+
+5. Make sure that the yum repository configurations on all of the hosts are correct
+
+```
+ansible all -m shell -a'yum repolist'
+
+
+master1.b19f.internal | SUCCESS | rc=0 >>
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos, versionlock
+repo id                                     repo name                    status
+!rh-gluster-3-client-for-rhel-7-server-rpms Red Hat Enterprise Linux Glu     228
+!rhel-7-server-ansible-2.6-rpms             Red Hat Enterprise Linux Ans      16
+!rhel-7-server-extras-rpms                  Red Hat Enterprise Linux 7 E 920+102
+!rhel-7-server-optional-rpms                Red Hat Enterprise Linux 7 O  17,231
+!rhel-7-server-ose-3.11-rpms                Red Hat Enterprise Linux 7 O  316+32
+!rhel-7-server-rh-common-rpms               Red Hat Enterprise Linux 7 C     235
+!rhel-7-server-rpms                         Red Hat Enterprise Linux 7    23,349
+repolist: 42,295
+.........................
+.........................
+```
+
+6. Make sure the systems have the latest patches
 ```
 # Update RHEL
 yum -y update
